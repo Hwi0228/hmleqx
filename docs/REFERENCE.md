@@ -283,9 +283,9 @@ A inter B = { x | x in A ~and~ x in B }
 
 ## hmleqx extensions
 
-- Indexed-root alias: `sqrt 3 of 5` → `\\sqrt[3]{5}`.
+- Indexed-root alias: `sqrt 3 of 5` → `\sqrt[3]{5}`.
 - `bar AD` / `overline AD` use a full-width overline.
 - `cap` and `cup` are binary intersection/union aliases.
-- Ordinary fractions use `\\dfrac`; fractions inside scripts use `\\frac`.
+- Ordinary fractions use `\dfrac`; fractions inside scripts use `\frac`.
 - Scripted `lim`, `sum`, and integral operators receive display style when
   needed for correctly positioned limits and operator sizing.

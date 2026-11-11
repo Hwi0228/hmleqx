@@ -265,7 +265,6 @@ fn extra_delimiters_and_prefixes() {
     );
 }
 
-
 /// Improvements requested for hmleqx.
 #[test]
 fn hmleqx_indexed_sqrt_spelling() {
@@ -277,7 +276,10 @@ fn hmleqx_indexed_sqrt_spelling() {
 
 #[test]
 fn hmleqx_limit_and_large_operator_display_style() {
-    check("lim _{x rarrow 0} f(x)", r"\displaystyle\lim_{x \rightarrow 0} f ( x )");
+    check(
+        "lim _{x rarrow 0} f(x)",
+        r"\displaystyle\lim_{x \rightarrow 0} f ( x )",
+    );
     check("sum _{k=1} ^{n} k", r"\displaystyle\sum_{k = 1}^{n} k");
     check("int _0 ^1 x dx", r"\displaystyle\int_{0}^{1} x dx");
     check("x^{1 over 2}", r"x^{\frac{1}{2}}");
@@ -285,7 +287,10 @@ fn hmleqx_limit_and_large_operator_display_style() {
 
 #[test]
 fn hmleqx_nested_delimiters_and_matrices() {
-    check("LEFT ( a + LEFT [ b + c RIGHT ] RIGHT )", r"\left( a + \left[ b + c \right] \right)");
+    check(
+        "LEFT ( a + LEFT [ b + c RIGHT ] RIGHT )",
+        r"\left( a + \left[ b + c \right] \right)",
+    );
     check(
         "pmatrix { a & matrix { x & y # z & w } # b & c }",
         r"\begin{pmatrix} a & \begin{matrix} x & y \\ z & w \end{matrix} \\ b & c \end{pmatrix}",

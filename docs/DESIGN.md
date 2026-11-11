@@ -289,7 +289,7 @@ the input and the output. #33 written out: the input is `a`, tilde, `b`, backquo
 
 The hmleqx fork additionally accepts `sqrt <degree> of <radicand>` as an
 indexed-root spelling. Ordinary displayed fractions are emitted with
-`\\dfrac`; fractions nested in superscripts or subscripts use `\\frac`.
+`\dfrac`; fractions nested in superscripts or subscripts use `\frac`.
 Scripted limit functions and large operators use display style where their
 limits need to sit above and below the operator. The `bar` and `overline`
 decorations emit a full-width overline, and `cap` / `cup` are available as

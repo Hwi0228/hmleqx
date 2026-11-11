@@ -88,7 +88,12 @@ fn emit_with_context(node: &Node, in_script: bool) -> String {
             out
         }
         Node::Delimited { left, right, body } => {
-            format!(r"\left{} {} \right{}", delim(left), child(body), delim(right))
+            format!(
+                r"\left{} {} \right{}",
+                delim(left),
+                child(body),
+                delim(right)
+            )
         }
         Node::Matrix { kind, rows } => emit_matrix_context(*kind, rows, in_script),
         Node::Accent { accent, base } => format!("{}{{{}}}", accent.latex, child(base)),
@@ -142,12 +147,17 @@ fn emit_matrix_context(kind: MatrixKind, rows: &[Vec<Node>], in_script: bool) ->
         MatrixKind::RPile => ("array", "{r}"),
     };
     let cell_sep = if spec.is_empty() { " & " } else { " " };
-    let body = rows.iter().map(|cells| {
-        cells.iter()
-            .map(|node| emit_with_context(node, in_script))
-            .collect::<Vec<_>>()
-            .join(cell_sep)
-    }).collect::<Vec<_>>().join(r" \\ ");
+    let body = rows
+        .iter()
+        .map(|cells| {
+            cells
+                .iter()
+                .map(|node| emit_with_context(node, in_script))
+                .collect::<Vec<_>>()
+                .join(cell_sep)
+        })
+        .collect::<Vec<_>>()
+        .join(r" \\ ");
     format!(r"\begin{{{0}}}{1} {2} \end{{{0}}}", env, spec, body)
 }
 
