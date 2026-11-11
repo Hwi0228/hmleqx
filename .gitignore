@@ -1,2 +1,9 @@
 /target
 Cargo.lock
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.so
+*.pyd
+*.dll

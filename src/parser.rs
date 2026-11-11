@@ -67,7 +67,10 @@ fn infix_name(c: Cmd) -> &'static str {
 
 /// The delimiters accepted after `left`/`right`.
 fn is_delimiter(s: &str) -> bool {
-    matches!(s, "(" | ")" | "[" | "]" | "|" | "||" | "<" | ">" | ".")
+    matches!(
+        s,
+        "(" | ")" | "[" | "]" | "|" | "||" | "<" | ">" | "." | "⌊" | "⌋" | "⌈" | "⌉" | "⟨" | "⟩"
+    )
 }
 
 impl Parser {
@@ -290,7 +293,20 @@ impl Parser {
                 at,
             )),
             Cmd::Of => Ok(Node::Ident(w.to_string())),
-            Cmd::Sqrt => Ok(Node::Sqrt(Box::new(self.operand(stop, &name)?))),
+            Cmd::Sqrt => {
+                // Hancom also accepts "sqrt <degree> of <radicand>".
+                let first = self.operand(stop, &name)?;
+                if self.peek_cmd() == Some(Cmd::Of) {
+                    self.pos += 1;
+                    let radicand = self.operand(stop, &name)?;
+                    Ok(Node::Root {
+                        degree: Box::new(first),
+                        radicand: Box::new(radicand),
+                    })
+                } else {
+                    Ok(Node::Sqrt(Box::new(first)))
+                }
+            }
             Cmd::Root => {
                 let degree = self.operand(stop, &name)?;
                 if self.peek_cmd() != Some(Cmd::Of) {
@@ -399,6 +415,14 @@ impl Parser {
     /// One `LEFT`/`RIGHT` delimiter, kept verbatim for the emitter to map.
     fn delimiter(&mut self, what: &str) -> Result<String, ParseError> {
         let text = match self.peek() {
+            Some(Token {
+                kind: TokenKind::LBrace,
+                ..
+            }) => "{".to_string(),
+            Some(Token {
+                kind: TokenKind::RBrace,
+                ..
+            }) => "}".to_string(),
             Some(Token {
                 kind: TokenKind::Op(s),
                 ..

@@ -1,0 +1,17 @@
+[package]
+name = "hmleqx-python"
+version = "0.2.1"
+edition = "2021"
+description = "Python bindings for the hmleqx Hancom equation parser"
+license = "MIT"
+repository = "https://github.com/Hwi0228/hmleqx"
+publish = false
+
+[lib]
+name = "_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+hmleq = { path = "../..", features = ["latex", "serde"] }
+pyo3 = { version = "0.27", features = ["abi3-py39"] }
+serde_json = "1"

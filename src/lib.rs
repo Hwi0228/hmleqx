@@ -44,7 +44,7 @@ pub fn to_latex(node: &Node) -> String {
 /// Convenience: parse an equation script and render it as LaTeX.
 ///
 /// ```
-/// assert_eq!(hmleq::eq_to_latex("1 over 2").unwrap(), r"\frac{1}{2}");
+/// assert_eq!(hmleq::eq_to_latex("1 over 2").unwrap(), r"\dfrac{1}{2}");
 /// assert_eq!(hmleq::eq_to_latex("sin x").unwrap(), r"\sin x");
 /// assert_eq!(hmleq::eq_to_latex("sinx").unwrap(), "sinx");
 /// ```
