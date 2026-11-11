@@ -36,14 +36,14 @@ assert_eq!(serde_json::from_str::<hmleq::Node>(&json)?, ast);
 
 // feature "latex" (기본): LaTeX 변환.
 let latex = hmleq::eq_to_latex("sum _{n=1} ^{inf} {1 over n^2} = {pi^2} over 6")?;
-assert_eq!(latex, r"\sum_{n = 1}^{\infty} \frac{1}{n^{2}} = \frac{\pi^{2}}{6}");
+assert_eq!(latex, r"\sum_{n = 1}^{\infty} \dfrac{1}{n^{2}} = \dfrac{\pi^{2}}{6}");
 ```
 
 CLI (`cli/`의 `hmleq-cli` 크레이트, 바이너리 이름은 `hmleq`):
 
 ```console
 $ cargo run -q -p hmleq-cli -- 'lim _{x rarrow 0} {sin x} over x = 1'
-\lim_{x \rightarrow 0} \frac{\sin x}{x} = 1
+\lim_{x \rightarrow 0} \dfrac{\sin x}{x} = 1
 
 $ cargo run -q -p hmleq-cli -- --json '1 over pi'
 {"Frac":{"num":{"Number":"1"},"den":{"Symbol":"pi"},"bar":true}}
@@ -90,3 +90,57 @@ Ordinary fractions use `\\dfrac`, while fractions nested in superscripts or
 subscripts use `\\frac`. Scripted limits and large operators are emitted in
 display style when appropriate. See [REFERENCE.md](docs/REFERENCE.md) for the
 current syntax and output conventions.
+
+## Python package
+
+The `hmleqx` Python package is a thin binding over the existing Rust parser.
+PyO3 exposes the same parser and renderer; there is no second Python
+implementation of the lexer, parser, AST, or LaTeX emitter.
+
+### Install from the repository
+
+A Rust toolchain is required when building from source:
+
+```console
+python -m pip install .
+```
+
+For an editable development build, install Maturin and compile the extension
+into the active virtual environment:
+
+```console
+python -m pip install maturin
+maturin develop
+```
+
+Build a wheel without installing it:
+
+```console
+maturin build --release
+```
+
+### Python API
+
+```python
+import hmleqx
+
+latex = hmleqx.to_latex("1 over 2")
+print(latex)  # \dfrac{1}{2}
+
+# convert() and eq_to_latex() are aliases of to_latex().
+latex = hmleqx.convert("sum _{n=1} ^{inf} 1 over n^2")
+
+# parse() returns the Rust AST as ordinary Python dict/list/scalar objects.
+ast = hmleqx.parse("1 over pi")
+print(ast)
+```
+
+Parsing errors are raised as `ValueError`; invalid Python argument types
+raise `TypeError`. The native extension targets the CPython stable ABI from
+Python 3.9 onward.
+
+Python API tests can be run with:
+
+```console
+python -m unittest discover -s tests/python -v
+```

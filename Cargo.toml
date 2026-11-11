@@ -9,7 +9,7 @@ keywords = ["hwp", "hml", "equation", "latex", "parser"]
 categories = ["parser-implementations"]
 
 [workspace]
-members = ["cli"]
+members = ["cli", "bindings/python"]
 
 [features]
 default = ["latex"]
