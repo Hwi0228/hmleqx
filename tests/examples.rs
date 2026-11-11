@@ -44,12 +44,12 @@ fn canonical_reference_examples() {
     // quadratic formula
     check(
         "x = {-b +- sqrt{b^2 -4ac}} over {2a}",
-        r"x = \frac{- b \pm \sqrt{b^{2} - 4 ac}}{2 a}",
+        r"x = \dfrac{- b \pm \sqrt{b^{2} - 4 ac}}{2 a}",
     );
     // limit
     check(
         "lim _{x rarrow 0} {sin x} over x = 1",
-        r"\lim_{x \rightarrow 0} \frac{\sin x}{x} = 1",
+        r"\displaystyle\lim_{x \rightarrow 0} \dfrac{\sin x}{x} = 1",
     );
     // definite integral
     check(
@@ -59,7 +59,7 @@ fn canonical_reference_examples() {
     // series
     check(
         "sum _{n=1} ^{inf} {1 over n^2} = {pi^2} over 6",
-        r"\sum_{n = 1}^{\infty} \frac{1}{n^{2}} = \frac{\pi^{2}}{6}",
+        r"\displaystyle\sum_{n = 1}^{\infty} \dfrac{1}{n^{2}} = \dfrac{\pi^{2}}{6}",
     );
     // matrix
     check(
@@ -101,7 +101,7 @@ fn canonical_scripts_roots_and_delimiters() {
     check("SQRT 2", r"\sqrt{2}"); // commands are case-insensitive
     check("vec A", r"\vec{A}"); // accent takes the following term
     check(r#""hello world""#, r"\text{hello world}");
-    check("LEFT ( x over y RIGHT )", r"\left( \frac{x}{y} \right)");
+    check("LEFT ( x over y RIGHT )", r"\left( \dfrac{x}{y} \right)");
     check("a != b", r"a \neq b"); // two-char ligature
 }
 
@@ -112,7 +112,7 @@ fn canonical_symbols_styles_and_spacing() {
     check("H_2 O", r"H_{2} O");
     check("Alpha + alpha", r"A + \alpha"); // Latin-shaped capital Greek
     check("rm ABC", r"\mathrm{ABC}"); // style runs to the end of the group
-    check("a over b over c", r"\frac{\frac{a}{b}}{c}"); // left-associative
+    check("a over b over c", r"\dfrac{\dfrac{a}{b}}{c}"); // left-associative
     check("{a + b}^2", r"{a + b}^{2}"); // multi-item script base gets braces
     check("x atop y", r"{x \atop y}");
     check("A union B", r"A \cup B"); // bare big operator uses its binary form
@@ -122,7 +122,7 @@ fn canonical_symbols_styles_and_spacing() {
     // written out: `a`, tilde, `b`, backquote, `c`.
     check("a ~ b ` c", r"a \; b \, c");
     check("buildrel def over =", r"\overset{def}{=}");
-    check("smallsum _{k} a_k", r"\sum\nolimits_{k} a_{k}");
+    check("smallsum _{k} a_k", r"\displaystyle\sum\nolimits_{k} a_{k}");
 }
 
 // ---------------------------------------------------------------------------
@@ -184,9 +184,9 @@ fn extra_basic_forms() {
 /// `over` draws the bar, `atop` does not.
 #[test]
 fn extra_over_versus_atop() {
-    check("x over y", r"\frac{x}{y}");
+    check("x over y", r"\dfrac{x}{y}");
     check("x atop y", r"{x \atop y}");
-    check("1 over 2", r"\frac{1}{2}");
+    check("1 over 2", r"\dfrac{1}{2}");
     // `rel` is the documented alias of `buildrel`.
     check("rel x over y", r"\overset{x}{y}");
 }
@@ -220,10 +220,10 @@ fn extra_matrix_environments() {
 fn extra_keyword_case_rules() {
     check("COS x", r"\cos x");
     check("Sin x", r"\sin x");
-    check("1 OVER 2", r"\frac{1}{2}");
+    check("1 OVER 2", r"\dfrac{1}{2}");
     check("PI", r"\pi"); // no exact entry `PI` -> falls through to `pi`
     check("Pi", r"\Pi"); // exact entry wins
-    check("LIM _{n} a", r"\lim_{n} a"); // limits below, unlike `Lim`
+    check("LIM _{n} a", r"\displaystyle\lim_{n} a"); // limits below, unlike `Lim`
     check("RARROW", r"\Rightarrow"); // exact entry
     check("Rarrow", r"\rightarrow"); // no exact entry -> CI `rarrow`
 }
@@ -261,6 +261,42 @@ fn extra_delimiters_and_prefixes() {
     check("not in", r"\not \in");
     check(
         "{a+b} over {a-b} bigg / {x+y}",
-        r"\frac{a + b}{a - b} \bigg / x + y",
+        r"\dfrac{a + b}{a - b} \bigg / x + y",
     );
+}
+
+
+/// Improvements requested for hmleqx.
+#[test]
+fn hmleqx_indexed_sqrt_spelling() {
+    check("sqrt 3 of 5", r"\sqrt[3]{5}");
+    check("sqrt 3 of {a+b}", r"\sqrt[3]{a + b}");
+    check("sqrt 2", r"\sqrt{2}");
+    check("sqrt {x^2 + 1}", r"\sqrt{x^{2} + 1}");
+}
+
+#[test]
+fn hmleqx_limit_and_large_operator_display_style() {
+    check("lim _{x rarrow 0} f(x)", r"\displaystyle\lim_{x \rightarrow 0} f ( x )");
+    check("sum _{k=1} ^{n} k", r"\displaystyle\sum_{k = 1}^{n} k");
+    check("int _0 ^1 x dx", r"\displaystyle\int_{0}^{1} x dx");
+    check("x^{1 over 2}", r"x^{\frac{1}{2}}");
+}
+
+#[test]
+fn hmleqx_nested_delimiters_and_matrices() {
+    check("LEFT ( a + LEFT [ b + c RIGHT ] RIGHT )", r"\left( a + \left[ b + c \right] \right)");
+    check(
+        "pmatrix { a & matrix { x & y # z & w } # b & c }",
+        r"\begin{pmatrix} a & \begin{matrix} x & y \\ z & w \end{matrix} \\ b & c \end{pmatrix}",
+    );
+}
+
+#[test]
+fn hmleqx_symbol_aliases_and_segment_overline() {
+    check("x prime", r"x \prime");
+    check("A cap B", r"A \cap B");
+    check("A rarrow B", r"A \rightarrow B");
+    check("bar AD", r"\overline{AD}");
+    check("overline {AB}", r"\overline{AB}");
 }

@@ -290,7 +290,20 @@ impl Parser {
                 at,
             )),
             Cmd::Of => Ok(Node::Ident(w.to_string())),
-            Cmd::Sqrt => Ok(Node::Sqrt(Box::new(self.operand(stop, &name)?))),
+            Cmd::Sqrt => {
+                // Hancom also accepts "sqrt <degree> of <radicand>".
+                let first = self.operand(stop, &name)?;
+                if self.peek_cmd() == Some(Cmd::Of) {
+                    self.pos += 1;
+                    let radicand = self.operand(stop, &name)?;
+                    Ok(Node::Root {
+                        degree: Box::new(first),
+                        radicand: Box::new(radicand),
+                    })
+                } else {
+                    Ok(Node::Sqrt(Box::new(first)))
+                }
+            }
             Cmd::Root => {
                 let degree = self.operand(stop, &name)?;
                 if self.peek_cmd() != Some(Cmd::Of) {

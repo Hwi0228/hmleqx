@@ -353,6 +353,7 @@ static CI_SYMS: &[SymDef] = &[
     bigop("otint", r"\oiiint", ScriptPos::Normal),
     bigop_bin("union", r"\bigcup", r"\cup", ScriptPos::Below),
     bigop_bin("inter", r"\bigcap", r"\cap", ScriptPos::Below),
+    bin("cap", r"\cap"),
     bigop_bin("dsum", r"\bigoplus", r"\oplus", ScriptPos::Below),
     // `small*`: same glyph, scripts forced beside it.
     bigop("smallsum", r"\sum", ScriptPos::Beside),
@@ -400,7 +401,8 @@ static CI_SYMS: &[SymDef] = &[
     accent("grave", r"\grave"),
     accent("dot", r"\dot"),
     accent("ddot", r"\ddot"),
-    accent("bar", r"\bar"),
+    accent("bar", r"\overline"),
+    accent("overline", r"\overline"),
     accent("vec", r"\vec"),
     accent("dyad", r"\overleftrightarrow"),
     accent("hat", r"\hat"),

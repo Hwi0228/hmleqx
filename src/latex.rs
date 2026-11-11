@@ -43,9 +43,14 @@ pub fn delimiter_latex(raw: &str) -> Option<&'static str> {
 // ---------------------------------------------------------------------------
 
 fn emit(node: &Node) -> String {
-    match node {
-        Node::Row(items) => items.iter().map(emit).collect::<Vec<_>>().join(" "),
+    emit_with_context(node, false)
+}
 
+/// Fractions are display-sized in ordinary expressions and compact in scripts.
+fn emit_with_context(node: &Node, in_script: bool) -> String {
+    let child = |n: &Node| emit_with_context(n, in_script);
+    match node {
+        Node::Row(items) => items.iter().map(child).collect::<Vec<_>>().join(" "),
         Node::Number(s) | Node::Ident(s) => s.clone(),
         Node::Op(s) => match op_ligature(s) {
             Some(tex) => tex.to_string(),
@@ -53,61 +58,94 @@ fn emit(node: &Node) -> String {
         },
         Node::Text(s) => format!(r"\text{{{}}}", escape_text(s)),
         Node::Symbol(d) => emit_symbol(d),
-
         Node::Space(SpaceKind::Full) => r"\;".to_string(),
         Node::Space(SpaceKind::Quarter) => r"\,".to_string(),
         Node::Newline => r"\\".to_string(),
         Node::Align => "&".to_string(),
-
         Node::Frac { num, den, bar } => {
             if *bar {
-                format!(r"\frac{{{}}}{{{}}}", emit(num), emit(den))
+                let command = if in_script { r"\frac" } else { r"\dfrac" };
+                format!("{}{{{}}}{{{}}}", command, child(num), child(den))
             } else {
-                format!(r"{{{} \atop {}}}", emit(num), emit(den))
+                format!(r"{{{} \atop {}}}", child(num), child(den))
             }
         }
-        Node::Binom { top, bottom } => format!(r"\binom{{{}}}{{{}}}", emit(top), emit(bottom)),
-        Node::Sqrt(x) => format!(r"\sqrt{{{}}}", emit(x)),
-        // The degree is the one macro argument that stays unbraced.
-        Node::Root { degree, radicand } => {
-            format!(r"\sqrt[{}]{{{}}}", emit(degree), emit(radicand))
+        Node::Binom { top, bottom } => {
+            format!(r"\binom{{{}}}{{{}}}", child(top), child(bottom))
         }
-
+        Node::Sqrt(x) => format!(r"\sqrt{{{}}}", child(x)),
+        Node::Root { degree, radicand } => {
+            format!(r"\sqrt[{}]{{{}}}", child(degree), child(radicand))
+        }
         Node::Script { base, sub, sup } => {
-            let mut out = emit_script_base(base);
+            let mut out = emit_script_base_context(base, in_script);
             if let Some(sub) = sub {
-                out.push_str(&format!("_{{{}}}", emit(sub)));
+                out.push_str(&format!("_{{{}}}", emit_with_context(sub, true)));
             }
             if let Some(sup) = sup {
-                out.push_str(&format!("^{{{}}}", emit(sup)));
+                out.push_str(&format!("^{{{}}}", emit_with_context(sup, true)));
             }
             out
         }
-
         Node::Delimited { left, right, body } => {
-            format!(
-                r"\left{} {} \right{}",
-                delim(left),
-                emit(body),
-                delim(right)
-            )
+            format!(r"\left{} {} \right{}", delim(left), child(body), delim(right))
         }
-
-        Node::Matrix { kind, rows } => emit_matrix(*kind, rows),
-
-        Node::Accent { accent, base } => format!("{}{{{}}}", accent.latex, emit(base)),
-
+        Node::Matrix { kind, rows } => emit_matrix_context(*kind, rows, in_script),
+        Node::Accent { accent, base } => format!("{}{{{}}}", accent.latex, child(base)),
         Node::Style { style, body } => match style {
-            StyleKind::Roman => format!(r"\mathrm{{{}}}", emit(body)),
-            StyleKind::Bold => format!(r"\boldsymbol{{{}}}", emit(body)),
-            StyleKind::RomanBold => format!(r"\mathbf{{{}}}", emit(body)),
-            StyleKind::Italic => emit(body),
+            StyleKind::Roman => format!(r"\mathrm{{{}}}", child(body)),
+            StyleKind::Bold => format!(r"\boldsymbol{{{}}}", child(body)),
+            StyleKind::RomanBold => format!(r"\mathbf{{{}}}", child(body)),
+            StyleKind::Italic => child(body),
         },
-
-        Node::BuildRel { top, base } => format!(r"\overset{{{}}}{{{}}}", emit(top), emit(base)),
-        Node::Not(x) => format!(r"\not {}", emit(x)),
-        Node::Big { size, arg } => format!("{} {}", size, emit(arg)),
+        Node::BuildRel { top, base } => {
+            format!(r"\overset{{{}}}{{{}}}", child(top), child(base))
+        }
+        Node::Not(x) => format!(r"\not {}", child(x)),
+        Node::Big { size, arg } => format!("{} {}", size, child(arg)),
     }
+}
+
+fn emit_script_base_context(base: &Node, in_script: bool) -> String {
+    match base {
+        Node::Symbol(d) => {
+            let mut out = String::new();
+            if !in_script && (d.scripts == ScriptPos::Below || d.kind == SymKind::BigOp) {
+                out.push_str(r"\displaystyle");
+            }
+            out.push_str(d.latex);
+            if d.scripts == ScriptPos::Beside {
+                out.push_str(r"\nolimits");
+            }
+            out
+        }
+        Node::Row(items) if items.len() >= 2 => {
+            format!("{{{}}}", emit_with_context(base, in_script))
+        }
+        _ => emit_with_context(base, in_script),
+    }
+}
+
+fn emit_matrix_context(kind: MatrixKind, rows: &[Vec<Node>], in_script: bool) -> String {
+    let (env, spec) = match kind {
+        MatrixKind::Plain => ("matrix", ""),
+        MatrixKind::Paren => ("pmatrix", ""),
+        MatrixKind::Bracket => ("bmatrix", ""),
+        MatrixKind::Det => ("vmatrix", ""),
+        MatrixKind::Cases => ("cases", ""),
+        MatrixKind::EqAlign => ("aligned", ""),
+        MatrixKind::Pile => ("array", "{c}"),
+        MatrixKind::LPile => ("array", "{l}"),
+        MatrixKind::RPile => ("array", "{r}"),
+    };
+    let cell_sep = if spec.is_empty() { " & " } else { " " };
+    let body = rows.iter().map(|cells| {
+        cells.iter()
+            .map(|node| emit_with_context(node, in_script))
+            .collect::<Vec<_>>()
+            .join(cell_sep)
+    }).collect::<Vec<_>>().join(r" \\ ");
+    format!(r"\begin{{{0}}}{1} {2} \end{{{0}}}", env, spec, body)
 }
 
 /// A delimiter as written -> its LaTeX. Unrecognized text cannot reach here
