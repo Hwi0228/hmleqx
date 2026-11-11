@@ -72,3 +72,21 @@ $ cargo test --all-features   # + serde 라운드트립
 
 `tests/examples.rs`가 `docs/DESIGN.md` §6의 정준(canonical) 변환 표 전체를,
 `tests/serde_roundtrip.rs`가 AST의 JSON 라운드트립을 검증합니다.
+
+
+## hmleqx improvements
+
+The fork extends the original parser while retaining its Rust library and CLI
+interfaces. Current additions include:
+
+| Hancom script | LaTeX output |
+|---|---|
+| `sqrt 3 of 5` | `\\sqrt[3]{5}` |
+| `bar AD` | `\\overline{AD}` |
+| `A cap B` | `A \\cap B` |
+| `A cup B` | `A \\cup B` |
+
+Ordinary fractions use `\\dfrac`, while fractions nested in superscripts or
+subscripts use `\\frac`. Scripted limits and large operators are emitted in
+display style when appropriate. See [REFERENCE.md](docs/REFERENCE.md) for the
+current syntax and output conventions.
