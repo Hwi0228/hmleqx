@@ -27,7 +27,7 @@ class HmleqxPythonApiTests(unittest.TestCase):
         )
 
     def test_version_is_available(self):
-        self.assertEqual(hmleqx.__version__, "0.2.0")
+        self.assertEqual(hmleqx.__version__, "0.2.1")
         self.assertEqual(hmleqx.version(), hmleqx.__version__)
 
     def test_non_string_input_raises_type_error(self):

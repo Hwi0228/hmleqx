@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "hmleqx"
-version = "0.2.0"
+version = "0.2.1"
 description = "Hancom equation script parser and LaTeX converter powered by Rust"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -13,7 +13,6 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 

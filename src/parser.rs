@@ -67,7 +67,10 @@ fn infix_name(c: Cmd) -> &'static str {
 
 /// The delimiters accepted after `left`/`right`.
 fn is_delimiter(s: &str) -> bool {
-    matches!(s, "(" | ")" | "[" | "]" | "|" | "||" | "<" | ">" | ".")
+    matches!(
+        s,
+        "(" | ")" | "[" | "]" | "|" | "||" | "<" | ">" | "." | "⌊" | "⌋" | "⌈" | "⌉" | "⟨" | "⟩"
+    )
 }
 
 impl Parser {
@@ -412,6 +415,14 @@ impl Parser {
     /// One `LEFT`/`RIGHT` delimiter, kept verbatim for the emitter to map.
     fn delimiter(&mut self, what: &str) -> Result<String, ParseError> {
         let text = match self.peek() {
+            Some(Token {
+                kind: TokenKind::LBrace,
+                ..
+            }) => "{".to_string(),
+            Some(Token {
+                kind: TokenKind::RBrace,
+                ..
+            }) => "}".to_string(),
             Some(Token {
                 kind: TokenKind::Op(s),
                 ..

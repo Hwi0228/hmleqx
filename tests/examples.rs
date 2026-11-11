@@ -301,6 +301,13 @@ fn hmleqx_nested_delimiters_and_matrices() {
 }
 
 #[test]
+fn hmleqx_floor_ceiling_and_brace_delimiters() {
+    check("LEFT ⌊ a+b RIGHT ⌋", r"\left\lfloor a + b \right\rfloor");
+    check("LEFT ⌈ a+b RIGHT ⌉", r"\left\lceil a + b \right\rceil");
+    check("LEFT { a+b RIGHT }", r"\left\{ a + b \right\}");
+}
+
+#[test]
 fn hmleqx_symbol_aliases_and_segment_overline() {
     check("x prime", r"x \prime");
     check("A cap B", r"A \cap B");

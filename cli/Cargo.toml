@@ -1,10 +1,10 @@
 [package]
 name = "hmleq-cli"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "CLI for hmleq: convert HWP equation script to LaTeX or a JSON AST"
 license = "MIT"
-repository = "https://github.com/alphaiv-project/hmleq"
+repository = "https://github.com/Hwi0228/hmleqx"
 
 [[bin]]
 name = "hmleq"
