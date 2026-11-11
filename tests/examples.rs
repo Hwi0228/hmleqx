@@ -54,7 +54,7 @@ fn canonical_reference_examples() {
     // definite integral
     check(
         "int _1 ^2 {3x^2} dx = LEFT[ x^3 RIGHT] _1 ^2 = 7",
-        r"\int_{1}^{2} 3 x^{2} dx = \left[ x^{3} \right]_{1}^{2} = 7",
+        r"\displaystyle\int_{1}^{2} 3 x^{2} dx = \left[ x^{3} \right]_{1}^{2} = 7",
     );
     // series
     check(
@@ -122,7 +122,7 @@ fn canonical_symbols_styles_and_spacing() {
     // written out: `a`, tilde, `b`, backquote, `c`.
     check("a ~ b ` c", r"a \; b \, c");
     check("buildrel def over =", r"\overset{def}{=}");
-    check("smallsum _{k} a_k", r"\displaystyle\sum\nolimits_{k} a_{k}");
+    check("smallsum _{k} a_k", r"\sum\nolimits_{k} a_{k}");
 }
 
 // ---------------------------------------------------------------------------

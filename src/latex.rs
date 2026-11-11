@@ -110,7 +110,10 @@ fn emit_script_base_context(base: &Node, in_script: bool) -> String {
     match base {
         Node::Symbol(d) => {
             let mut out = String::new();
-            if !in_script && (d.scripts == ScriptPos::Below || d.kind == SymKind::BigOp) {
+            if !in_script
+                && (d.scripts == ScriptPos::Below
+                    || (d.kind == SymKind::BigOp && d.scripts != ScriptPos::Beside))
+            {
                 out.push_str(r"\displaystyle");
             }
             out.push_str(d.latex);
