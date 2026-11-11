@@ -338,6 +338,7 @@ static CI_SYMS: &[SymDef] = &[
     bin("cdot", r"\cdot"),
     ord("forall", r"\forall"),
     ord("exist", r"\exists"),
+    ord("angle", r"\angle"),
     ord("prime", r"\prime"),
     bin("diamond", r"\diamond"),
     // `deg` is both a symbol and a base function; it resolves to the function

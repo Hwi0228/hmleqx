@@ -310,6 +310,8 @@ fn hmleqx_floor_ceiling_and_brace_delimiters() {
 #[test]
 fn hmleqx_symbol_aliases_and_segment_overline() {
     check("x prime", r"x \prime");
+    check("angle A", r"\angle A");
+    check("ANGLE A", r"\angle A");
     check("A cap B", r"A \cap B");
     check("A cup B", r"A \cup B");
     check("A rarrow B", r"A \rightarrow B");
