@@ -354,6 +354,7 @@ static CI_SYMS: &[SymDef] = &[
     bigop_bin("union", r"\bigcup", r"\cup", ScriptPos::Below),
     bigop_bin("inter", r"\bigcap", r"\cap", ScriptPos::Below),
     bin("cap", r"\cap"),
+    bin("cup", r"\cup"),
     bigop_bin("dsum", r"\bigoplus", r"\oplus", ScriptPos::Below),
     // `small*`: same glyph, scripts forced beside it.
     bigop("smallsum", r"\sum", ScriptPos::Beside),

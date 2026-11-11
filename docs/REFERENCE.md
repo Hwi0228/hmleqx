@@ -279,3 +279,13 @@ A inter B = { x | x in A ~and~ x in B }
 - SASA Math -- [한컴오피스 한글로 수식이 삽입된 문서 작성하는 방법](https://sasamath.com/blog/tip-collection/how-to-write-equations-in-hwp/)
 - 커뮤니티 팁 -- [아래한글 수식입력 정리 (한스디 카페)](https://m.cafe.daum.net/hwp-script-db/bVJe/31)
 - 참고 구현 -- [hml-equation-parser (HWP 수식 -> LaTeX 변환기)](https://github.com/OpenBapul/hml-equation-parser)
+
+
+## hmleqx extensions
+
+- Indexed-root alias: `sqrt 3 of 5` → `\\sqrt[3]{5}`.
+- `bar AD` / `overline AD` use a full-width overline.
+- `cap` and `cup` are binary intersection/union aliases.
+- Ordinary fractions use `\\dfrac`; fractions inside scripts use `\\frac`.
+- Scripted `lim`, `sum`, and integral operators receive display style when
+  needed for correctly positioned limits and operator sizing.
