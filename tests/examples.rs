@@ -116,7 +116,7 @@ fn canonical_symbols_styles_and_spacing() {
     check("{a + b}^2", r"{a + b}^{2}"); // multi-item script base gets braces
     check("x atop y", r"{x \atop y}");
     check("A union B", r"A \cup B"); // bare big operator uses its binary form
-    check("union _{i=1} ^{n} A_i", r"\bigcup_{i = 1}^{n} A_{i}"); // scripted: big form
+    check("union _{i=1} ^{n} A_i", r"\displaystyle\bigcup_{i = 1}^{n} A_{i}"); // scripted: big form
     check("vec A^2", r"\vec{A}^{2}"); // scripts do not bind inside the accent
 
     // written out: `a`, tilde, `b`, backquote, `c`.
