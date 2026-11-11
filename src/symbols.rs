@@ -656,7 +656,8 @@ mod tests {
     fn accents_and_styles() {
         for (w, l) in [
             ("vec", r"\vec"),
-            ("bar", r"\bar"),
+            ("bar", r"\overline"),
+            ("overline", r"\overline"),
             ("dyad", r"\overleftrightarrow"),
             ("arch", r"\overparen"),
             ("under", r"\underline"),

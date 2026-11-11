@@ -317,7 +317,7 @@ mod tests {
             Some(Node::Row(vec![ident("i"), op("="), num("1")])),
             Some(ident("n")),
         );
-        assert_eq!(to_latex(&scripted), r"\bigcup_{i = 1}^{n}");
+        assert_eq!(to_latex(&scripted), r"\displaystyle\bigcup_{i = 1}^{n}");
 
         // Wrapped in a Row the operator is no longer *directly* under the
         // Script, so it shrinks again.
@@ -463,7 +463,7 @@ mod tests {
             den: Box::new(ident("y")),
             bar: true,
         };
-        assert_eq!(to_latex(&frac), r"\frac{x}{y}");
+        assert_eq!(to_latex(&frac), r"\dfrac{x}{y}");
         let atop = Node::Frac {
             num: Box::new(ident("x")),
             den: Box::new(ident("y")),
