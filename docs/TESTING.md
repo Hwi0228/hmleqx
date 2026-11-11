@@ -19,4 +19,4 @@ The integration suite includes regression cases for:
 - Full-width overlines for segment notation such as `bar AD`.
 
 When adding a regression case, keep the input script and expected LaTeX
-independent of copyrighted source documents.
+independent of copyrighted source documents. Rust doc-tests also verify the public API examples.
