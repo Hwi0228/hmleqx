@@ -166,48 +166,6 @@ fn emit_symbol(d: &SymDef) -> String {
     }
 }
 
-/// The base of a `Script`: bare unless it is a `Row` of ≥ 2 items, in which
-/// case braces keep the scripts attached to the whole base.
-fn emit_script_base(base: &Node) -> String {
-    match base {
-        // A symbol scripted *directly* keeps its large form and may force the
-        // scripts beside it. Anything else (e.g. a symbol inside a Row) is not
-        // "directly under a Script" and goes through the normal path.
-        Node::Symbol(d) => {
-            let mut out = d.latex.to_string();
-            if d.scripts == ScriptPos::Beside {
-                out.push_str(r"\nolimits");
-            }
-            out
-        }
-        Node::Row(items) if items.len() >= 2 => format!("{{{}}}", emit(base)),
-        _ => emit(base),
-    }
-}
-
-fn emit_matrix(kind: MatrixKind, rows: &[Vec<Node>]) -> String {
-    let (env, spec) = match kind {
-        MatrixKind::Plain => ("matrix", ""),
-        MatrixKind::Paren => ("pmatrix", ""),
-        MatrixKind::Bracket => ("bmatrix", ""),
-        MatrixKind::Det => ("vmatrix", ""),
-        MatrixKind::Cases => ("cases", ""),
-        MatrixKind::EqAlign => ("aligned", ""),
-        MatrixKind::Pile => ("array", "{c}"),
-        MatrixKind::LPile => ("array", "{l}"),
-        MatrixKind::RPile => ("array", "{r}"),
-    };
-    // The pile environments declare a single column, so a stray `&` in one of
-    // their rows must not turn into an alignment tab.
-    let cell_sep = if spec.is_empty() { " & " } else { " " };
-    let body = rows
-        .iter()
-        .map(|cells| cells.iter().map(emit).collect::<Vec<_>>().join(cell_sep))
-        .collect::<Vec<_>>()
-        .join(r" \\ ");
-    format!(r"\begin{{{0}}}{1} {2} \end{{{0}}}", env, spec, body)
-}
-
 fn op_ligature(raw: &str) -> Option<&'static str> {
     Some(match raw {
         "+-" => r"\pm",
